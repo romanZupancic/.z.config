@@ -1,8 +1,15 @@
 { pkgs, ... }:
+let
+  emacs_package = pkgs.emacs;
+in
 {
-  services.emacs.enable = true;
+  services.emacs = {
+    enable = true;
+    package = emacs_package;
+  };
 
   programs.emacs = {
     enable = true;
+    package = emacs_package;
   };
 }
