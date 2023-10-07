@@ -1,12 +1,16 @@
+(defpoll time
+    :interval "1s"
+    :initial "00:00:00"
+    `date '+%H:%M:%S | %A %B %-d, %Y'`)
+
 (defwindow example
     :monitor 0
     :geometry (geometry :x "0%"
-			:y "20px"
+			:y "0%"
 			:width "90%"
 			:height "30px"
 			:anchor "top center")
     :stacking "fg"
-    :reserve (struts :distance "40px" :side "top")
-    :windowtype "dock"
-    :wm-ignore false
-    "example content")
+    :exclusive true
+    time
+    )
