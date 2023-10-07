@@ -12,8 +12,6 @@
     nur.url = "github:nix-community/NUR";
 
     nix-colors.url = "github:misterio77/nix-colors";
-
-    hyprland.url = "github:hyprwm/Hyprland";
   };
 
   outputs = { nixpkgs, home-manager, ... }@inputs:
@@ -30,8 +28,8 @@
         # Specify your home configuration modules here, for example,
         # the path to your home.nix.
         modules = [
-          ./home.nix
           inputs.nix-colors.homeManagerModules.default
+          ./home.nix
         ] ++ (getNixInDir (./. + "/programs"));
         extraSpecialArgs = { inherit inputs; };
       };
