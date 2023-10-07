@@ -35,10 +35,6 @@
     imagemagick
   ];
   
-  programs = {
-    emacs.enable = true;
-  };
-
   home.pointerCursor =
     let
       getFrom = url: hash: name: {
