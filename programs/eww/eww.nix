@@ -1,7 +1,8 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
   programs.eww = {
-    enable = false;
-    configDir = ./bar;
+    enable = true;
+    package = pkgs.eww-wayland;
+    configDir = ./barf;
   };
 }
