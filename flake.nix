@@ -3,13 +3,17 @@
 
   inputs = {
     # Specify the source of Home Manager and Nixpkgs.
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
     home-manager = {
       url = "github:nix-community/home-manager/release-23.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-colors.url = "github:misterio77/nix-colors";
+
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
     nur.url = "github:nix-community/NUR";
+
+    nix-colors.url = "github:misterio77/nix-colors";
+
+    hyprland.url = "github:hyprwm/Hyprland";
   };
 
   outputs = { nixpkgs, home-manager, ... }@inputs:
