@@ -33,6 +33,8 @@
     betterdiscordctl # run `betterdiscordctl install`
 
     imagemagick
+
+    bat
   ];
   
   home.pointerCursor =
