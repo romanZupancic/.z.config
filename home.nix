@@ -13,7 +13,7 @@
   colorScheme = inputs.nix-colors.colorSchemes.gruvbox-dark-medium;
   
   home.sessionVariables = {
-    EDITOR = "emacs";
+    EDITOR = "emacsclient -c";
   };
   
   # Let Home Manager install and manage itself.
