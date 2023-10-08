@@ -21,6 +21,9 @@
 
   outputs = { nixpkgs, home-manager, ... }@inputs:
     let
+      # Necessary for symlinks to files within the configuration repository
+      home-manager-root = "/home/romanz/.config/home-manager";
+
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
 
@@ -37,7 +40,10 @@
           inputs.nix-colors.homeManagerModules.default
           ./home.nix
         ] ++ (getNixInDir (./. + "/programs"));
-        extraSpecialArgs = { inherit inputs; };
+        extraSpecialArgs = {
+          inherit inputs;
+          rootPath = "${home-manager-root}";
+        };
       };
     };
 }

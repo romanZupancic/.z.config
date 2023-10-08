@@ -1,0 +1,598 @@
+﻿#+title Roman Zupancic's Emacs Configuration
+#+PROPERTY: header-args:emacs-lisp :tangle ./init.el
+
+* Roman Zupancic's Emacs Config
+This org-file generates an emacs configuration file, but is not the actual configuration file.
+To generate the ~init.el~ config file on a fresh emacs install, we need to tangle the document:
+#+begin_example
+  C-c C-v t
+#+end_example
+
+This keyboard combination will also re-build ~init.el~, even if it already exists.
+
+* Package Management
+** package.el
+Initialize ~package.el~ with the MELPA archive, and refresh the contents of that archive if we have never done so before
+#+begin_src emacs-lisp
+  (require 'package)
+
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/"))
+  ;(add-to-list 'package-archives
+  ;             '("gnu-devel" . "https://elpa.gnu.org/devel/"))
+
+  (package-initialize)
+  (unless package-archive-contents
+    (package-refresh-contents))
+#+end_src
+
+** use-package
+Install ~use-package~ if it is not installed. Configure it.
+#+begin_src emacs-lisp
+  (unless (package-installed-p 'use-package)
+    (package-install 'use-package))
+
+  (require 'use-package)
+
+  (setq use-package-always-ensure t)
+#+end_src
+
+* Editor Behaviour
+
+** Startup Behaviour
+#+begin_src emacs-lisp
+  (setq inhibit-startup-screen t)
+
+  ;; Start Folder
+  (when (string= "c:/Program Files/Emacs/" default-directory)
+    (setq default-directory "~/"))
+#+end_src
+
+** Editor Decorations
+#+begin_src emacs-lisp
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+
+  (global-display-line-numbers-mode 1)
+#+end_src
+
+** Escape-to-quit
+#+begin_src emacs-lisp
+  ;; Make ESC quit prompts
+  (global-set-key (kbd "<escape>") `keyboard-escape-quit)
+#+end_src
+
+** Evil Mode
+#+begin_src emacs-lisp
+  (use-package evil
+    :ensure t
+
+    :custom
+    (evil-want-integration t)
+    (evil-want-keybinding t)
+
+    :config
+    (evil-mode 1))
+#+end_src
+
+*** Undo Tree
+#+begin_src emacs-lisp
+  (use-package undo-tree
+    :ensure t
+    :diminish 
+    :config
+    (evil-set-undo-system 'undo-tree)
+    (global-undo-tree-mode 1)
+    (setq undo-tree-history-directory-alist
+	  `(("." . ,(concat (file-name-directory user-init-file) "undo-tree")))))
+#+end_src
+
+** Backup Directory
+By default, emacs backs up files in the same directory that the file exists in. I don't like how this can tend to over-polute my projects with files I'll never directly touch (but I also like the assurance of file-backups). So, I save file backups to a specific backup directory:
+#+begin_src emacs-lisp
+  (setq backup-directory-alist `(("." . ,(concat (file-name-directory user-init-file) "undo-tree"))))
+#+end_src
+
+** Completion Framework
+*** Vertico
+#+begin_src emacs-lisp
+  (use-package vertico
+    :config
+    (vertico-mode 1))
+#+end_src
+
+*** Vertico Posframe
+#+begin_src emacs-lisp :tangle no
+  (use-package vertico-posframe
+    :config
+    (vertico-posframe-mode 1)) 
+#+end_src
+
+*** Vertico Directory
+ #+begin_src emacs-lisp
+   (use-package vertico-directory
+     :after vertico
+     :ensure nil
+     :bind (:map vertico-map
+                 ("RET" . vertico-directory-enter)
+                 ("DEL" . vertico-directory-delete-word)
+                 ("M-DEL" . vertico-directory-delete-char))
+     :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+#+end_src
+
+*** Orderless
+#+begin_src emacs-lisp
+  (use-package orderless
+    :after vertico
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-defaults nil)
+    (completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+
+*** Marginalia
+#+begin_src emacs-lisp
+  (use-package marginalia
+    :after vertico
+    :custom
+    (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+    :init
+    (marginalia-mode))
+#+end_src
+
+** Which Key
+#+begin_src emacs-lisp
+  (use-package which-key
+    :diminish
+    :config
+    (which-key-mode 1))
+#+end_src
+
+** Magit
+Git support
+#+begin_src emacs-lisp
+  (use-package magit)
+#+end_src
+
+** Company
+#+begin_src emacs-lisp :tangle no
+  (use-package company
+    :diminish
+    :hook (prog-mode))
+#+end_src
+
+** Corfu
+#+begin_src emacs-lisp
+  (use-package corfu
+    :hook (corfu-mode . corfu-popupinfo-mode)
+    :custom
+    (corfu-auto t)
+    (corfu-quit-no-match 'separator)
+    :init (global-corfu-mode))
+#+end_src
+
+** Eglot
+#+begin_src emacs-lisp
+  (use-package eglot)
+
+  (use-package eldoc-box
+    :hook (eglot-managed-mode . eldoc-box-hover-at-point-mode)
+    :custom
+    (eldoc-box-max-pixel-width 2000)
+    :config
+    (set-face-attribute 'eldoc-box-body nil :family "Dubai")
+  )
+#+end_src
+
+** direnv
+#+begin_src emacs-lisp
+  (use-package direnv
+    :config
+    (direnv-mode))
+#+end_src
+* Appearance
+** Font
+#+begin_src emacs-lisp
+  (add-to-list 'default-frame-alist
+	       '(font . "Cascadia Code"))
+#+end_src
+
+*** Ligatures
+#+begin_src emacs-lisp
+  (use-package ligature
+    :config
+    ;; Enable the "www" ligature in every possible major mode
+    (ligature-set-ligatures 't '("www"))
+    ;; Enable traditional ligature support in eww-mode, if the
+    ;; `variable-pitch' face supports it
+    (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+    ;; Enable all Cascadia and Fira Code ligatures in programming modes
+    (ligature-set-ligatures 't
+                          '(;; == === ==== => =| =>>=>=|=>==>> ==< =/=//=// =~
+                            ;; =:= =!=
+                            ("=" (rx (+ (or ">" "<" "|" "/" "~" ":" "!" "="))))
+                            ;; ;; ;;;
+                            (";" (rx (+ ";")))
+                            ;; && &&&
+                            ("&" (rx (+ "&")))
+                            ;; !! !!! !. !: !!. != !== !~
+                            ("!" (rx (+ (or "=" "!" "\." ":" "~"))))
+                            ;; ?? ??? ?:  ?=  ?.
+                            ("?" (rx (or ":" "=" "\." (+ "?"))))
+                            ;; %% %%%
+                            ("%" (rx (+ "%")))
+                            ;; |> ||> |||> ||||> |] |} || ||| |-> ||-||
+                            ;; |->>-||-<<-| |- |== ||=||
+                            ;; |==>>==<<==<=>==//==/=!==:===>
+                            ("|" (rx (+ (or ">" "<" "|" "/" ":" "!" "}" "\]"
+                                            "-" "=" ))))
+                            ;; \\ \\\ \/
+                            ("\\" (rx (or "/" (+ "\\"))))
+                            ;; ++ +++ ++++ +>
+                            ("+" (rx (or ">" (+ "+"))))
+                            ;; :: ::: :::: :> :< := :// ::=
+                            (":" (rx (or ">" "<" "=" "//" ":=" (+ ":"))))
+                            ;; // /// //// /\ /* /> /===:===!=//===>>==>==/
+                            ("/" (rx (+ (or ">"  "<" "|" "/" "\\" "\*" ":" "!"
+                                            "="))))
+                            ;; .. ... .... .= .- .? ..= ..<
+                            ("\." (rx (or "=" "-" "\?" "\.=" "\.<" (+ "\."))))
+                            ;; -- --- ---- -~ -> ->> -| -|->-->>->--<<-|
+                            ("-" (rx (+ (or ">" "<" "|" "~" "-"))))
+                            ;; *> */ *)  ** *** ****
+                            ;; ("*" (rx (or ">" "/" ")" (+ "*")))) ; disabling
+                            ;; www wwww
+                            ("w" (rx (+ "w")))
+                            ;; <> <!-- <|> <: <~ <~> <~~ <+ <* <$ </  <+> <*>
+                            ;; <$> </> <|  <||  <||| <|||| <- <-| <-<<-|-> <->>
+                            ;; <<-> <= <=> <<==<<==>=|=>==/==//=!==:=>
+                            ;; << <<< <<<<
+                            ("<" (rx (+ (or "\+" "\*" "\$" "<" ">" ":" "~"  "!"
+                                            "-"  "/" "|" "="))))
+                            ;; >: >- >>- >--|-> >>-|-> >= >== >>== >=|=:=>>
+                            ;; >> >>> >>>>
+                            (">" (rx (+ (or ">" "<" "|" "/" ":" "=" "-"))))
+                            ;; #: #= #! #( #? #[ #{ #_ #_( ## ### #####
+                            ("#" (rx (or ":" "=" "!" "(" "\?" "\[" "{" "_(" "_"
+                                         (+ "#"))))
+                            ;; ~~ ~~~ ~=  ~-  ~@ ~> ~~>
+                            ("~" (rx (or ">" "=" "-" "@" "~>" (+ "~"))))
+                            ;; __ ___ ____ _|_ __|____|_
+                            ("_" (rx (+ (or "_" "|"))))
+                            ;; Fira code: 0xFF 0x12
+                            ("0" (rx (and "x" (+ (in "A-F" "a-f" "0-9")))))
+                            ;; Fira code:
+                            "Fl"  "Tl"  "fi"  "fj"  "fl"  "ft"
+                            ;; The few not covered by the regexps.
+                            "{|"  "[|"  "]#"  "(*"  "}#"  "$>"  "^="))
+    ;; Enables ligature checks globally in all buffers. You can also do it
+    ;; per mode with `ligature-mode'.
+    (global-ligature-mode t))
+#+end_src
+
+** Theme
+*** Doom Themes
+#+begin_src emacs-lisp
+  (use-package doom-themes
+    :ensure t
+    :custom
+    (doom-themes-enable-bold t)
+    (doom-themes-enable-italic t)
+    :config
+    (load-theme 'doom-gruvbox t)
+    (doom-themes-org-config))
+#+end_src
+
+*** Tommorrow Theme
+#+begin_src emacs-lisp :tangle no
+  (use-package color-theme-sanityinc-tomorrow
+    :ensure t)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (use-package base16
+    :ensure t
+    :config
+    (load-theme 'base16-tomorrow-night)
+    )
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+(add-to-list 'custom-theme-load-path "c:/users/roman/.emacs.d/everforest-theme")
+(load-theme 'everforest-hard-dark t)
+#+end_src
+
+** Rainbow Delimiters
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :delight
+    :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+
+** Modeline
+*** Diminish
+#+begin_src emacs-lisp
+  ;; Allows use-package to remove certain minor-modes from the mode-line
+  (use-package diminish)
+#+end_src
+
+** Transparency
+#+begin_src emacs-lisp
+  (defun kb/toggle-window-transparency ()
+    "Toggle transparency."
+    (interactive)
+    (let ((alpha-transparency 75))
+      (pcase (frame-parameter nil 'alpha-background)
+	(alpha-transparency (set-frame-parameter nil 'alpha-background 100))
+	(t (set-frame-parameter nil 'alpha-background alpha-transparency)))))
+#+end_src
+
+* Editing Modes
+** Org Mode
+#+begin_src emacs-lisp
+  (use-package org
+    :pin gnu
+    :hook ((org-mode . visual-line-mode)
+           (org-mode . org-indent-mode)
+           (org-mode . (lambda () (setq evil-shift-width 2))))
+    :custom
+    (org-hide-leading-starts t)
+    (org-babel-default-inline-header-args
+     '((:session . "none")
+       (:results . "replace")
+       (:exports . "code")
+       (:hlines . "yes")))
+    (org-inline-src-prettify-results '("(" . ")"))
+    (org-highlight-latex-and-related '(native script entities)))
+#+end_src
+
+*** Org Agenda
+#+begin_src emacs-lisp
+  (use-package org-agenda
+    :after org
+    :ensure nil
+    :custom
+    (org-agenda-files '("~/OrgAgenda/"))
+
+    (org-agenda-skip-deadline-prewarning-if-scheduled t)
+
+    (org-agenda-custom-commands
+     '(("c" "Simple agenda view"
+        ((agenda "")
+         (alltodo "")))))
+
+    (org-todo-keywords '((sequence "TODO" "IN-PROGRESS" "DONE"))))
+#+end_src
+
+*** Org Src
+#+begin_src emacs-lisp
+  (use-package org-src
+    :after org
+    :ensure nil
+    :custom
+    (org-src-tab-acts-natively nil))
+#+end_src
+
+*** Org Tempo
+
+#+begin_src emacs-lisp
+  (use-package org-tempo
+    :after org
+    :ensure nil
+    :config
+    (setq org-structure-template-alist
+          '(("a" . "export ascii")
+            ("c" . "center")
+            ("C" . "comment")
+            ("e" . "example")
+            ("E" . "export")
+            ("h" . "export html")
+            ("l" . "export latex")
+            ("q" . "quote")
+            ("s" . "src")
+            ("v" . "verse")
+            ("sl" . "src emacs-lisp")
+            ("sp" . "src python"))))
+#+end_src
+
+*** Evil Org
+#+begin_src emacs-lisp
+  (if (file-directory-p "C:/Users/roman/Documents/Projects/extern/evil-org-mode")
+      (use-package evil-org
+	:after org
+	:load-path "C:/Users/roman/Documents/Projects/extern/evil-org-mode"))
+#+end_src
+
+*** HTMLize
+#+begin_src emacs-lisp
+  (use-package htmlize
+    :after org)
+#+end_src
+
+*** Org-Ox
+#+begin_src emacs-lisp
+  (use-package ox-latex
+    :ensure org
+    :config
+    ;; Add latex classes
+    (add-to-list 'org-latex-classes
+                 '("turabian-researchpaper"
+                   "\\documentclass{turabian-researchpaper}"
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
+#+end_src
+
+*** Positioning
+Center and narrow the Org-Mode buffer.
+#+begin_src emacs-lisp
+  (use-package visual-fill-column
+    :defer t
+    :hook org-mode
+    :custom
+    (visual-fill-column-width 110)
+    (visual-fill-column-center-text t)
+    :config
+    (visual-fill-column-mode 1))
+#+end_src
+
+*** Org Export Clean
+#+begin_src emacs-lisp
+  (defun rz/clean-org-export ()
+    "Clean all org export files."
+    (interactive)
+    (mapc #'delete-file
+          (mapcan (lambda (arg)
+                    (mapcar (lambda (x)
+                              (concat arg x))
+                            (list ".tex" ".html" ".pdf")))
+                  (mapcar #'file-name-sans-extension
+                          (directory-files "." nil "\\.org$")))))
+#+end_src
+
+*** Screenshot
+Taken from [[https://www.sastibe.de/2018/11/take-screenshots-straight-into-org-files-in-emacs-on-win10][this website]]. I'm transforming into image-pasting function rather than screenshot-taking function.
+
+- [X] Remove ~(org-display-inline-images)~
+- [X] Remove ~(shell-command "snippingtool /clip")~
+- [ ] Change ~setq~ to ~let~
+- [ ] Support image directories [0/2]
+  - [ ] Save to directory
+  - [ ] Create directory if it does not exist
+
+#+begin_src emacs-lisp
+  (defun rz/org-paste-image-from-clipboard ()
+    "Take a screenshot into a time stamped unique-named file in the
+  same directory as the org-buffer and insert a link to this file."
+    (interactive)
+    (unless (file-directory-p "org-imgs")
+      (make-directory "org-imgs"))
+    (let ((filename (concat "org-imgs/"
+                            (buffer-file-name)
+                            "_"
+                            (format-time-string "%Y%m%d_%H%M%S_") ".png")))
+      (shell-command (concat "powershell -command \"Add-Type -AssemblyName System.Windows.Forms;if ($([System.Windows.Forms.Clipboard]::ContainsImage())) {$image = [System.Windows.Forms.Clipboard]::GetImage();[System.Drawing.Bitmap]$image.Save('"
+                             filename
+                             "',[System.Drawing.Imaging.ImageFormat]::Png); Write-Output 'clipboard content saved as file'} else {Write-Output 'clipboard does not contain image data'}\""))
+      (insert (concat "[[file:" filename "]]"))))
+#+end_src
+
+[[file:org-imgs/c:/Users/roman/.emacs.d/config.org_20230228_204434_.png]]
+
+** Web Mode
+#+begin_src emacs-lisp
+  (use-package web-mode
+    :mode (("\\.html?\\'" . web-mode))
+    :custom
+    (web-mode-enable-block-face t)
+    (web-mode-enable-comment-keywords t)
+    (web-mode-enable-current-element-highlight t)
+    (web-mode-enable-current-column-highlight t)
+    (web-mode-script-padding 4)
+    (web-mode-style-padding 4)
+    (web-mode-comment-style 4)
+    (web-mode-code-indent-offset 4)
+    (web-mode-markup-indent-offset 2)
+    (web-mode-css-indent-offset 2))
+#+end_src
+
+** Typescript Mode
+#+begin_src emacs-lisp
+  (use-package typescript-mode)
+
+  (require 'ansi-color)
+  (defun colorize-compilation-buffer ()
+    (ansi-color-apply-on-region compilation-filter-start (point-max)))
+  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+#+end_src
+** Powershell Mode
+#+begin_src emacs-lisp
+  (use-package powershell)
+#+end_src
+
+** Python Mode
+#+begin_src emacs-lisp
+  (use-package python
+    :hook ((python-mode . (lambda () (setq evil-shift-width python-indent))))
+    :custom
+    (evil-shift-width python-indent))
+#+end_src
+
+** Rust Mode
+#+begin_src emacs-lisp
+  (use-package rust-mode)
+#+end_src
+
+** Haskell Mode
+#+begin_src emacs-lisp
+  (use-package haskell-mode
+    :mode "\\.hs\\'"
+    :hook ((haskell-mode . interactive-haskell-mode)
+           (haskell-mode . haskell-indentation-mode))
+    :custom
+    (haskell-interactive-popup-errors nil)
+    ;; Configure haskell-specific indentation
+    (haskell-indentation-layout-offset 4)
+    (haskell-indentation-starter-offset 4)
+    (haskell-indentation-left-offset 4)
+    (haskell-indentation-where-pre-offset 4)
+    (haskell-indentation-where-post-offset 4)
+    (haskell-indent-spaces 4)
+    ;; Cabal repl
+    (haskell-process-type `cabal-repl)
+    ;; Interactive haskell mode configuration
+    (haskell-process-auto-import-loaded-modules t)
+    (haskell-process-log t)
+    )
+#+end_src
+
+** Mardown Mode
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+      :config
+      (set-face-attribute 'markdown-code-face nil :family "Cascadia Code")
+      (set-face-attribute 'markdown-pre-face nil :family "Cascadia Code")
+    )
+#+end_src
+
+** Nix Mode
+#+begin_src emacs-lisp
+  (use-package nix-mode
+    :mode "\\.nix\\'")
+#+end_src
+
+* Quick Files
+#+begin_src emacs-lisp
+  (defun rz/config-org ()
+    (interactive)
+    (find-file (concat (file-name-directory user-init-file) "config.org")))
+
+  (defun rz/agenda ()
+    (interactive)
+    (find-file "~/OrgAgenda"))
+
+  (global-set-key (kbd "C-c i") 'rz/config-org)
+
+  (global-set-key (kbd "C-c a") 'rz/agenda)
+
+  (global-set-key (kbd "C-c A") 'org-agenda)
+#+end_src
+
+** Reload init.el
+#+begin_src emacs-lisp
+  ; Reload the configuration
+  (defun rz/reload-init ()
+    (interactive)
+    (load-file user-init-file))
+  ; Tangle the current document and reload the configuration
+  (defun rz/tangle-reload ()
+    (interactive)
+    (org-babel-tangle-file (concat (file-name-directory user-init-file) "config.org"))
+    (rz/reload-init))
+
+  (global-set-key (kbd "C-c r") 'rz/reload-init)
+  (global-set-key (kbd "C-c R") 'rz/tangle-reload)
+#+end_src
