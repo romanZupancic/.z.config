@@ -351,9 +351,21 @@ Git support
 
 *** Org Agenda
 #+begin_src emacs-lisp
+  (defun evil-org-edit-src-exit ()
+    "Save with `org-edit-src-save', then `evil-edit-src-exit'."
+    (interactive)
+    (mapc #'call-interactively '(org-edit-src-save org-edit-src-exit)))
+
   (use-package org-agenda
     :after org
     :ensure nil
+    :config
+    ;; Setup evil-mode keys for org-src buffers
+    (with-eval-after-load 'org-src
+      (define-key org-src-mode-map [remap evil-write]                   #'org-edit-src-save)
+      (define-key org-src-mode-map [remap evil-save-and-close]          #'evil-org-edit-src-exit)
+      (define-key org-src-mode-map [remap evil-save-modified-and-close] #'evil-org-edit-src-exit)
+      (define-key org-src-mode-map [remap evil-quit]                    #'org-edit-src-abort))
     :custom
     (org-agenda-files '("~/OrgAgenda/"))
 
