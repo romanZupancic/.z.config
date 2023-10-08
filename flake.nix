@@ -12,6 +12,8 @@
     nur.url = "github:nix-community/NUR";
 
     nix-colors.url = "github:misterio77/nix-colors";
+
+    spicetify-nix.url = "github:the-argus/spicetify-nix";
   };
 
   outputs = { nixpkgs, home-manager, ... }@inputs:
@@ -28,6 +30,7 @@
         # Specify your home configuration modules here, for example,
         # the path to your home.nix.
         modules = [
+          inputs.spicetify-nix.homeManagerModules.default
           inputs.nix-colors.homeManagerModules.default
           ./home.nix
         ] ++ (getNixInDir (./. + "/programs"));
