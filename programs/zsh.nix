@@ -5,6 +5,8 @@
     shellAliases = {
       os-rebuild = "sudo nixos-rebuild switch";
       home-switch = "home-manager switch";
+      hc = "cd ~/.config/home-manager";
+      ":q" = "exit";
     };
     enableCompletion = true;
     
@@ -15,7 +17,7 @@
         "thefuck"
         "direnv"
       ];
-      theme = "robbyrussell";
+      theme = "amuse";
     };
     
     initExtra = ''
