@@ -9,6 +9,14 @@ in {
 
   services.spotifyd = {
     enable = true;
+    settings = {
+      global = {
+        username = "roman.k.zupancic@gmail.com";
+        password_cmd = "sh /home/romanz/.config/spotify-password.sh";
+        use_keyring = true;
+        device_name = "Nixos Spotifyd";
+      };
+    };
   };
 
   programs.spicetify = {
