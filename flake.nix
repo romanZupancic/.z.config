@@ -2,17 +2,20 @@
   description = "Home Manager configuration of romanz";
 
   inputs = {
-    # Specify the source of Home Manager and Nixpkgs.
+    # Home Manager
     home-manager = {
       url = "github:nix-community/home-manager/release-23.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Packages
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
-    nur.url = "github:nix-community/NUR";
+    nur.url = "github:nix-community/NUR"; # Community packages
 
+    # Colours and theming
     nix-colors.url = "github:misterio77/nix-colors";
 
+    # Spotify theming & customization
     spicetify-nix.url = "github:the-argus/spicetify-nix";
   };
 
