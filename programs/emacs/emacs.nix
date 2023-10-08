@@ -1,6 +1,6 @@
 { pkgs, ... }:
 let
-  emacs_package = pkgs.emacs;
+  emacs_package = pkgs.emacs29-gtk3;
 in
 {
   services.emacs = {
