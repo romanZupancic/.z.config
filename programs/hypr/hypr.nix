@@ -18,7 +18,5 @@ ${pkgs.killall}/bin/killall hyprpaper -q >/dev/null 2>&1 && nohup ${pkgs.hyprpap
 '';
       };
 
-  home.file.".config/hypr/hyprland.conf".text = (builtins.readFile ./hyprland.conf) + ''
-exec-once=hyprctl setcursor "${config.home.pointerCursor.name}" ${toString config.home.pointerCursor.size}
-'';
+  home.file.".config/hypr/hyprland.conf".source = ./hyprland.conf;
 }
