@@ -13,7 +13,7 @@ preload = ${wallpaper_path}
 wallpaper = ,${wallpaper_path}
 '';
     onChange = ''
-echo "Restarting hyprpaper:"
+echo "Hyprpaper: Restarting"
 ${pkgs.killall}/bin/killall hyprpaper -q >/dev/null 2>&1 && nohup ${pkgs.hyprpaper}/bin/hyprpaper >/dev/null 2>&1 &
 '';
       };

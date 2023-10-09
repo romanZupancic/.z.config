@@ -51,10 +51,10 @@
   home.pointerCursor =
     let
       getFrom = url: hash: name: {
-          gtk.enable = true;
+          gtk.enable = false;
           x11.enable = true;
           name = name;
-          size = 48;
+          size = 12;
           package = 
             pkgs.runCommand "moveUp" {} ''
               mkdir -p $out/share/icons
