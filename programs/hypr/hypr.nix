@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 let
   wallpaper_path = "~/Pictures/wallpapers/spaceman-gruvbox.jpg";
   # wallpaper_path = "~/Pictures/wallpapers/city-gruvbox.png";
@@ -18,5 +18,7 @@ ${pkgs.killall}/bin/killall hyprpaper -q >/dev/null 2>&1 && nohup ${pkgs.hyprpap
 '';
       };
 
-  home.file.".config/hypr/hyprland.conf".source = ./hyprland.conf;
+  home.file.".config/hypr/hyprland.conf".text = (builtins.readFile ./hyprland.conf) + ''
+exec-once=hyprctl setcursor "${config.home.pointerCursor.name}" ${toString config.home.pointerCursor.size}
+'';
 }
