@@ -6,10 +6,13 @@
       name = "Cascadia Code";
     };
     theme = {
-      name = "gruvbox-dark";
-      package = pkgs.gruvbox-dark-gtk;
+      name = "adw-gtk3";
+      package = pkgs.adw-gtk3;
     };
   };
+
+  home.file.".config/gtk-4.0/gtk.css".source = ./gtk.css;
+  home.file.".config/gtk-3.0/gtk.css".source = ./gtk.css;
 
   home.pointerCursor = 
     let 

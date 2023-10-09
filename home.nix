@@ -14,6 +14,7 @@
   
   home.sessionVariables = {
     EDITOR = "emacsclient -c";
+    PAGER = "${pkgs.most}/bin/most";
   };
   
   # Let Home Manager install and manage itself.
@@ -35,5 +36,10 @@
     imagemagick
 
     bat
+    most
+
+    bottles
+
+    man-pages man-pages-posix
   ];
 }
