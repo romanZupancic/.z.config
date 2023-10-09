@@ -1,0 +1,110 @@
+(defpoll time
+	 :interval "1s"
+	 :initial "00:00:00"
+	 `date '+%H:%M:%S | %A %B %-d, %Y'`)
+
+(defpoll brightness
+	 :interval "5s"
+	 :initial "-1%"
+	 {"./scripts/backlight.sh"})
+
+;; HYPRLAND
+(deflisten window_title
+	   :initial "..."
+	   "./scripts/get-window-title.sh")
+
+(deflisten workspaces
+	   :initial "[]"
+	   "./scripts/get-workspaces.sh")
+(deflisten current_workspace
+	   :initial "1"
+	   "./scripts/get-active-workspace.sh")
+
+(defwidget workspaces []
+	   (box :space-evenly true
+		(for workspace in workspaces
+		     (eventbox :onclick "hyprctl dispatch workspace ${workspace.id}"
+			       (box :class "workspace-entry ${workspace.id == current_workspace ? 'current' : ''} ${workspace.windows > 0 ? 'occupied' : 'empty'}"
+				    (label :text "${workspace.id}")
+				    )
+			       )
+		     )
+		)
+	   )
+
+(defwidget icon_value [icon value]
+	   (box
+	    :class "icon_value"
+	    "${icon} ${value}")
+	   )
+
+(defwidget system_indicator_group []
+	   (box
+	    :class "system_indicator_group"
+	    :spacing 3
+	    (icon_value :icon ""
+			:value "${round(EWW_RAM.used_mem / EWW_RAM.total_mem * 100, 0)}%")
+	    (icon_value :icon ""
+			:value "${round(EWW_CPU.avg, 0)}%")
+	    (icon_value :icon ""
+			:value "${round(EWW_BATTERY.BAT0.capacity, 0)}%")
+	    ))
+
+(defwidget output_control_group []
+	   (box
+	    :class "output_control_group"
+	    (icon_value :icon ""
+			:value "${brightness}%")
+	    ))
+
+(defwidget bar_leftside []
+	   (box
+	    :class "bar_leftside posgroup"
+	    :orientation "horizontal"
+	    :space-evenly false
+	    :spacing 10
+	    :halign "start"
+	    :valign "center"
+	    time
+	    ""
+	    (workspaces)
+	    ))
+
+(defwidget bar_middle []
+	   (box
+	    :class "bar_middle posgroup"
+	    :orientation "horizontal"
+	    :space-evenly false
+	    :halign "center"
+	    :valign "center"
+	    window_title
+	   ))
+
+(defwidget bar_rightside []
+	   (box
+	    :class "bar_rightside posgroup"
+	    :orientation "horizontal"
+	    :space-evenly false
+	    :spacing 20
+	    :halign "end"
+	    :valign "center"
+	    (system_indicator_group)
+	    (output_control_group)
+	    ))
+
+(defwindow ex
+	   :monitor 0
+	   :geometry (geometry :x "0%"
+			       :y "5px"
+			       :width "100%"
+			       :height "10px"
+			       :anchor "top center")
+	   :stacking "fg"
+	   :exclusive true
+	   (centerbox
+	    :orientation "horizontal"
+	    :valign "center"
+	    (bar_leftside)
+	    (bar_middle)
+	    (bar_rightside))
+	   )

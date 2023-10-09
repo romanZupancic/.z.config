@@ -1,7 +1,13 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
+  home.packages = with pkgs; [
+    jq
+    socat
+  ];
+
   programs.eww = {
-    enable = false;
-    configDir = ./bar;
+    enable = true;
+    package = pkgs.eww-wayland;
+    configDir = ./barf;
   };
 }

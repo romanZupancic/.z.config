@@ -1,0 +1,23 @@
+window {
+    font-size: 13px;
+}
+
+.ex {
+    border-radius: 10px;
+}
+
+.posgroup {
+    margin: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.workspace-entry {
+    &.current {
+	color: red;
+	font-weight: bold;
+    }
+    &.empty {
+	color: rgba(0,0,0,0);
+    }
+}

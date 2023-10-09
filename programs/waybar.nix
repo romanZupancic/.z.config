@@ -1,7 +1,7 @@
 { config, ... }:
 {
   programs.waybar = {
-    enable = true;
+    enable = false;
     settings = {
       mainBar = {
         layer = "bottom";
