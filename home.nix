@@ -39,6 +39,17 @@
     emacs.enable = true;
   };
 
+  gtk = {
+    enable = true;
+    font = {
+      name = "Cascadia Code";
+    };
+    theme = {
+      name = "gruvbox-dark";
+      package = pkgs.gruvbox-dark-gtk;
+    };
+  };
+
   home.pointerCursor =
     let
       getFrom = url: hash: name: {
