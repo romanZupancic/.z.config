@@ -23,7 +23,6 @@
   # Manage XDG variables
   xdg.enable = true;
 
-  nixpkgs.config.allowUnfreePredicate = _ : true;
   home.packages = with pkgs; [
     thefuck
 
