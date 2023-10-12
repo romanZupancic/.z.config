@@ -1,7 +1,7 @@
 { config, ... }:
 {
   programs.alacritty = {
-    enable = true;
+    enable = false;
     settings = {
       window.padding = {
         x = 5;
