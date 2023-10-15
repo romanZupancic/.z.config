@@ -12,7 +12,7 @@
       recolor-keephue = true;
       recolor-darkcolor = "#${config.colorScheme.colors.base06}";
       recolor-lightcolor = "#${config.colorScheme.colors.base00}";
-      copy-clipboard = "clipboard";
+      selection-clipboard = "clipboard";
     };
   };
 }
