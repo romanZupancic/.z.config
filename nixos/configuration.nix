@@ -74,7 +74,7 @@
     isNormalUser = true;
     description = "Roman Zupancic";
     extraGroups = [ "networkmanager" "wheel" ];
-    shell = pkgs.zsh;
+    shell = pkgs.bash;
   };
   
   
@@ -211,9 +211,7 @@
   
   services.tlp.enable = true;
   
-  programs.zsh.enable = true;
-  environment.shells = [pkgs.zsh pkgs.bash];
-  users.defaultUserShell = pkgs.zsh;
+  users.defaultUserShell = pkgs.bash;
 
   documentation.dev.enable = true;
 

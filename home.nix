@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, lib, ... }:
+{ config, pkgs, inputs, lib, rootPath, ... }:
 
 {
   nixpkgs.overlays = [
@@ -15,6 +15,13 @@
   home.sessionVariables = {
     EDITOR = "emacsclient -c";
     PAGER = "${pkgs.most}/bin/most";
+  };
+
+  home.shellAliases = {
+    os-rebuild = "sudo nixos-rebuild switch --flake ${rootPath}";
+    home-switch = "home-manager switch --flake ${rootPath}";
+    hc = "cd ${rootPath}";
+    ":q" = "exit";
   };
   
   # Let Home Manager install and manage itself.

@@ -1,13 +1,7 @@
-{ config, rootPath, ... }:
+{ config, ... }:
 {
   programs.zsh = {
-    enable = true;
-    shellAliases = {
-      os-rebuild = "sudo nixos-rebuild switch --flake ${rootPath}";
-      home-switch = "home-manager switch --flake ${rootPath}";
-      hc = "cd ${rootPath}";
-      ":q" = "exit";
-    };
+    enable = false;
     enableCompletion = true;
     
     oh-my-zsh = {
