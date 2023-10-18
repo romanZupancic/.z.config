@@ -1,7 +1,7 @@
 { pkgs, config, ... }:
 {
   programs.kitty = {
-    enable = true;
+    enable = false;
     font = {
       package = (pkgs.nerdfonts.override {fonts = ["CascadiaCode"];});
       name = "CascadiaCode";
