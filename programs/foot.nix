@@ -27,6 +27,15 @@
         regular6 = "${base0C}";
         regular7 = "${base06}";
 
+        bright0 = "${base00}";
+        bright1 = "${base08}";
+        bright2 = "${base0B}";
+        bright3 = "${base09}";
+        bright4 = "${base0D}";
+        bright5 = "${base0E}";
+        bright6 = "${base0C}";
+        bright7 = "${base06}";
+
         alpha = 0.9;
       };
     };
