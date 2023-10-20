@@ -17,7 +17,7 @@
 	   :initial "[]"
 	   "./scripts/get-workspaces.sh")
 (deflisten current_workspace
-	   :initial "1"
+	   :initial "2"
 	   "./scripts/get-active-workspace.sh")
 
 (defwidget workspaces []
