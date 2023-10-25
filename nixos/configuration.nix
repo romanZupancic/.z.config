@@ -94,6 +94,8 @@
 
     neofetch
 
+    git
+
     glxinfo
     
     # Wayland stuff

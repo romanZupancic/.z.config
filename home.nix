@@ -47,5 +47,7 @@
     bottles
 
     man-pages man-pages-posix
+
+    asciiquarium
   ];
 }
