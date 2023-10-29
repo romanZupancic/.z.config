@@ -198,6 +198,8 @@
     noto-fonts-emoji
     noto-fonts-cjk
     emojione
+    corefonts
+    vistafonts
   ];
   
   # What does this do? Hyprland?
