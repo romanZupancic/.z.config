@@ -17,6 +17,8 @@
     PAGER = "${pkgs.most}/bin/most";
   };
 
+  
+
   home.shellAliases = {
     os-rebuild = "sudo nixos-rebuild switch --flake ${rootPath}";
     home-switch = "home-manager switch --flake ${rootPath}";

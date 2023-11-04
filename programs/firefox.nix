@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
   programs.firefox = {
     enable = true;
@@ -21,6 +21,21 @@
         bitwarden
         ublock-origin
         gruvbox-dark-theme
+        (buildFirefoxXpiAddon {
+          pname = "Playback Speed";
+          version = "1.4.4";
+          addonId = "playbackSpeed@waldemar.b";
+          url = "https://addons.mozilla.org/firefox/downloads/file/3864607/playback_speed-1.4.4.xpi";
+          sha256 = "sha256-SfGV/gWtoTs5UF8sCqRGMeKH99GaIkIIXnclRD7MHP0=";
+          meta = with lib;
+            {
+              homepage = "https://github.com/WaldiPL/playbackSpeed";
+              description = "Increase video playback speed everywhere";
+              license = licenses.mit;
+              mozPermissions = [ "activeTab" "storage" "scripting" "tabs" "*://*/*" ];
+              platforms = platforms.all;
+            };
+        })
       ];
       settings = {
         "signon.rememberSignons" = false;
