@@ -1,7 +1,9 @@
 { pkgs, config, ... }:
 let
-  wallpaper_path = "~/Pictures/wallpapers/spaceman-gruvbox.jpg";
-  # wallpaper_path = "~/Pictures/wallpapers/city-gruvbox.png";
+  wallpaper_path = pkgs.fetchurl {
+    url = "https://raw.githubusercontent.com/AngelJumbo/gruvbox-wallpapers/main/wallpapers/minimalistic/gruvbox_astro.jpg";
+    hash = "sha256-YTxyI+vaC5CGQzqMm1enfPh9/1YoqNXAX7TmAscz1U0=";
+  };
 in {
   # Hyprpaper config
   home.packages = with pkgs; [

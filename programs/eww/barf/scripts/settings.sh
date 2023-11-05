@@ -1,3 +1,3 @@
 #!/bin/sh
 
-BACKLIGHT_DEVICE="amdgpu_bl0"
+BACKLIGHT_DEVICE="amdgpu_bl1"
