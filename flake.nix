@@ -4,6 +4,7 @@
   inputs = {
     # Packages
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
+    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nur.url = "github:nix-community/NUR"; # Community packages
 
     # Home Manager
@@ -27,6 +28,10 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
+
+        overlays = [
+          (final: prev: {unstable = inputs.unstable.legacyPackages.${prev.system};})
+        ];
 
         config = {
           allowUnfree = true;

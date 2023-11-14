@@ -81,5 +81,9 @@
     asciiquarium
 
     xdg-utils
+
+    unstable.logseq
+
+    vlc
   ];
 }
